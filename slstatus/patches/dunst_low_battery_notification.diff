@@ -1,0 +1,70 @@
+diff --git a/components/battery.c b/components/battery.c
+index 1c753f9..530ae02 100644
+--- a/components/battery.c
++++ b/components/battery.c
+@@ -1,5 +1,6 @@
+ /* See LICENSE file for copyright and license details. */
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ 
+ #include "../slstatus.h"
+@@ -76,6 +77,46 @@
+ 		return (i == LEN(map)) ? "?" : map[i].symbol;
+ 	}
+ 
++	const char *
++	battery_perc_state(const char *bat)
++	{
++		int cap_perc;
++		static char battery_low_shown = 0;
++		char path[PATH_MAX];
++
++		if (esnprintf(path, sizeof(path), POWER_SUPPLY_CAPACITY, bat) < 0)
++			return NULL;
++		if (pscanf(path, "%d", &cap_perc) != 1)
++			return NULL;
++
++		static struct {
++			char *state;
++			char *symbol;
++		} map[] = {
++			{ "Discharging",  "-" },
++			{ "Full",         "o" },
++			{ "Not charging", "o" },
++			{ "Charging",     "+" },
++		};
++		size_t i;
++		char state[12];
++
++		if (esnprintf(path, sizeof(path), POWER_SUPPLY_STATUS, bat) < 0)
++			return NULL;
++		if (pscanf(path, "%12[a-zA-Z ]", state) != 1)
++			return NULL;
++
++		for (i = 0; i < LEN(map); i++)
++			if (!strcmp(map[i].state, state))
++				break;
++
++		if (!i && cap_perc <= 20) {
++			if (!battery_low_shown) 
++				system("dunstify -r 1234 -u critical 'Battery Low' 'Please plug in your charger!'"), battery_low_shown = 1;
++		} else battery_low_shown = 0;
++		return bprintf("%d%%(%s)", cap_perc, (i == LEN(map)) ? "?" : map[i].symbol);
++	}
++
+ 	const char *
+ 	battery_remaining(const char *bat)
+ 	{
+diff --git a/slstatus.h b/slstatus.h
+index 8ef5874..ba8a751 100644
+--- a/slstatus.h
++++ b/slstatus.h
+@@ -4,6 +4,7 @@
+ const char *battery_perc(const char *);
+ const char *battery_remaining(const char *);
+ const char *battery_state(const char *);
++const char *battery_perc_state(const char *);
+ 
+ /* cat */
+ const char *cat(const char *path);
