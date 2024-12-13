@@ -671,8 +671,8 @@ execsh(char *cmd, char **args)
 			die("who are you?\n");
 	}
 
-	if ((sh = getenv("SHELL")) == NULL)
-		sh = (pw->pw_shell[0]) ? pw->pw_shell : cmd;
+	//if ((sh = getenv("SHELL")) == NULL) sh = (pw->pw_shell[0]) ? pw->pw_shell : cmd;
+	if ((sh = cmd) == NULL) if ((sh = getenv("SHELL")) == NULL) sh = pw->pw_shell; /* Fallback value must be present in /etc/passwd for current user */
 
 	if (args) {
 		prog = args[0];
@@ -1705,7 +1705,7 @@ csihandle(void)
 			}
 			break;
 		case 1: /* above */
-			if (term.c.y > 1)
+			if (term.c.y > 0)
 				tclearregion(0, 0, term.col-1, term.c.y-1);
 			tclearregion(0, term.c.y, term.c.x, term.c.y);
 			break;

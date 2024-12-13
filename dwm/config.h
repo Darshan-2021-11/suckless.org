@@ -63,17 +63,17 @@ static const char *termcmd[]  = { "st", NULL };
 /* For audio functions, refer:
  * https://www.reddit.com/r/suckless/comments/c64pv8/comment/es69te5/
  */
-static const char *mutecmd[] =        { "amixer", "-q", "set", "Master",        "toggle", NULL };
-static const char *volupcmd[] =       { "amixer", "-q", "set", "Master", "1%+", "unmute", NULL };
-static const char *voldowncmd[] =     { "amixer", "-q", "set", "Master", "1%-", "unmute", NULL };
+static const char *mutecmd[] =       { "amixer", "-q", "set", "Master",        "toggle", NULL };
+static const char *volupcmd[] =      { "amixer", "-q", "set", "Master", "1%+", "unmute", NULL };
+static const char *voldowncmd[] =    { "amixer", "-q", "set", "Master", "1%-", "unmute", NULL };
 
 /* For brightness functions */
-static const char *brupcmd[] =        { "brightnessctl", "-n2", "-e", "set", "+5%", NULL };
-static const char *brdowncmd[] =      { "brightnessctl", "-n2", "-e", "set", "5%-", NULL };
+static const char *brupcmd[] =       { "brightnessctl", "-n2", "-e", "set", "+5%", NULL };
+static const char *brdowncmd[] =     { "brightnessctl", "-n2", "-e", "set", "5%-", NULL };
 
 /* For screenshot functions */
-static const char *prtscfullcmd[] =   { "scrot", "-Z", "9", "-i", "screenshots\/%Y-%m-%d-%H%M%S_$wx$h.png", NULL };
-static const char *prtscselectcmd[] = { "scrot", "-Z", "9", "-s", "-f", "-i", "screenshots\/%Y-%m-%d-%H%M%S_$wx$h.png", NULL };
+static const char prtscfullcmd[] =   "mkdir -p $HOME/screenshots && scrot -Z 9 -i $HOME/screenshots/%Y-%m-%d-%H%M%S_\\$wx\\$h.png";
+static const char prtscselectcmd[] = "mkdir -p $HOME/screenshots && scrot -Z 9 -s -f -i $HOME/screenshots/%Y-%m-%d-%H%M%S_\\$wx\\$h.png";
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -121,8 +121,8 @@ static const Key keys[] = {
 	{ 0,            XF86XK_MonBrightnessDown,  spawn,          { .v = brdowncmd      } },
 
 	// screenshot bindings
-	{ MODKEY,                    XK_Print,     spawn,          { .v = prtscfullcmd   } },
-	{ MODKEY|ShiftMask,          XK_Print,     spawn,          { .v = prtscselectcmd } },
+	{ MODKEY,                    XK_Print,     spawn,          SHCMD(prtscfullcmd)   },
+	{ MODKEY|ShiftMask,          XK_Print,     spawn,          SHCMD(prtscselectcmd) },
 
 };
 

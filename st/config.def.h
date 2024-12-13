@@ -5,18 +5,18 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+static char *font = "Source Code Pro:pixelsize=18:antialias=true:autohint=true";
 static int borderpx = 2;
 
 /*
  * What program is execed by st depends of these precedence rules:
  * 1: program passed with -e
  * 2: scroll and/or utmp
- * 3: SHELL environment variable
- * 4: value of shell in /etc/passwd
- * 5: value of shell in config.h
+ * 3: value of shell in config.h, `NULL` to use below rules
+ * 4: SHELL environment variable
+ * 5: value of shell in /etc/passwd, always ensure for current user
  */
-static char *shell = "/bin/sh";
+static char *shell[] = { "/bin/bash", "-c", "tmux new-session -As g_tmux", NULL };
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
 char *scroll = NULL;
@@ -60,7 +60,7 @@ static double maxlatency = 33;
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 200;
+static unsigned int blinktimeout = 800;
 
 /*
  * thickness of underline and bar cursors
@@ -135,20 +135,13 @@ unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 257;
 
 /*
- * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
- * Default style of cursor
- * 0: blinking block
- * 1: blinking block (default)
- * 2: steady block ("█")
- * 3: blinking underline
- * 4: steady underline ("_")
- * 5: blinking bar
- * 6: steady bar ("|")
- * 7: blinking st cursor
- * 8: steady st cursor
+ * Default shape of cursor
+ * 2: Block ("█")
+ * 4: Underline ("_")
+ * 6: Bar ("|")
+ * 7: Snowman ("☃")
  */
-static unsigned int cursorstyle = 1;
-static Rune stcursor = 0x2603; /* snowman ("☃") */
+static unsigned int cursorshape = 2;
 
 /*
  * Default columns and rows numbers
